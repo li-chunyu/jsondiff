@@ -12,6 +12,7 @@ def main():
     parser.add_argument("-p", "--patch", action="store_true", default=False)
     parser.add_argument("-s", "--syntax", action="store", type=str, default="compact")
     parser.add_argument("-i", "--indent", action="store", type=int, default=None)
+    parser.add_argument("-l", "--list_as_set", action="store", type=bool, default=False)
 
     args = parser.parse_args()
 
@@ -24,14 +25,16 @@ def main():
                     jf,
                     jg,
                     marshal=True,
-                    syntax=args.syntax
+                    syntax=args.syntax,
+                    list_as_set=args.list_as_set
                 )
             else:
                 x = jsondiff.diff(
                     jf,
                     jg,
                     marshal=True,
-                    syntax=args.syntax
+                    syntax=args.syntax,
+                    list_as_set=args.list_as_set
                 )
 
             json.dump(x, sys.stdout, indent=args.indent)

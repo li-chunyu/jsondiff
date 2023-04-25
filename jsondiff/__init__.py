@@ -355,7 +355,7 @@ class JsonDiffer(object):
         pass
 
     def __init__(self, syntax='compact', load=False, dump=False, marshal=False,
-                 loader=default_loader, dumper=default_dumper, escape_str='$'):
+                 loader=default_loader, dumper=default_dumper, escape_str='$', list_as_set=False):
         self.options = JsonDiffer.Options()
         self.options.syntax = builtin_syntaxes.get(syntax, syntax)
         self.options.load = load
@@ -364,6 +364,7 @@ class JsonDiffer(object):
         self.options.loader = loader
         self.options.dumper = dumper
         self.options.escape_str = escape_str
+        self.options.list_as_set = list_as_set
         self._symbol_map = {
             escape_str + symbol.label: symbol
             for symbol in _all_symbols_
@@ -489,7 +490,10 @@ class JsonDiffer(object):
         elif isinstance(a, tuple) and isinstance(b, tuple):
             return self._list_diff(a, b)
         elif isinstance(a, list) and isinstance(b, list):
-            return self._list_diff(a, b)
+            if self.options.list_as_set:
+                return self._set_diff(set(a), set(b))
+            else:
+                return self._list_diff(a, b)
         elif isinstance(a, set) and isinstance(b, set):
             return self._set_diff(a, b)
         elif a != b:
